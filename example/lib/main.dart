@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:bitalino/bitalino.dart';
 
+String kBitalinoAddress = '00:21:06:BE:16:49';
+
 void main() {
   runApp(MyApp());
 }
@@ -14,11 +16,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  BITalinoController bitalinoController;
+  GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+  BITalinoController? bitalinoController;
   int sequence = 0;
   List<SensorValue> data = [];
-  DateTime previousTime;
-  TextEditingController controller = TextEditingController();
+  DateTime? previousTime;
+  TextEditingController controller =
+      TextEditingController(text: kBitalinoAddress);
 
   @override
   void initState() {
@@ -31,7 +36,7 @@ class _MyAppState extends State<MyApp> {
       bth ? CommunicationType.BTH : CommunicationType.BLE,
     );
     try {
-      await bitalinoController.initialize();
+      await bitalinoController!.initialize();
       _notify("Initialized: ${bth ? "BTH" : "BLE"}");
     } catch (e) {
       _notify("Initialization failed");
@@ -39,7 +44,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   _notify(dynamic text) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    _scaffoldMessengerKey.currentState!.showSnackBar(
       SnackBar(
         content: Text(
           text.toString(),
@@ -54,6 +59,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: _scaffoldMessengerKey,
       home: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
@@ -99,7 +105,7 @@ class _MyAppState extends State<MyApp> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
-                            bool connected = await bitalinoController.connect(
+                            bool connected = await bitalinoController!.connect(
                                 onConnectionLost: () {
                               _notify('Connection lost');
                             });
@@ -117,7 +123,7 @@ class _MyAppState extends State<MyApp> {
                         child: ElevatedButton(
                           onPressed: () async {
                             bool disconnected =
-                                await bitalinoController.disconnect();
+                                await bitalinoController!.disconnect();
                             _notify("Disconnected: $disconnected");
                           },
                           child: Text("Disconnect"),
@@ -131,7 +137,7 @@ class _MyAppState extends State<MyApp> {
                         child: ElevatedButton(
                           onPressed: () async {
                             previousTime = DateTime.now();
-                            bool started = await bitalinoController.start(
+                            bool started = await bitalinoController!.start(
                               [
                                 0,
                               ],
@@ -140,11 +146,11 @@ class _MyAppState extends State<MyApp> {
                               onDataAvailable: (frame) {
                                 if (data.length >= 30) data.removeAt(0);
                                 setState(() {
-                                  data.add(SensorValue(previousTime,
+                                  data.add(SensorValue(previousTime!,
                                       frame.analog[0].toDouble()));
                                   previousTime =
                                       DateTime.fromMillisecondsSinceEpoch(
-                                          previousTime.millisecondsSinceEpoch +
+                                          previousTime!.millisecondsSinceEpoch +
                                               1000 ~/ 10);
                                 });
                               },
@@ -160,7 +166,7 @@ class _MyAppState extends State<MyApp> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () async {
-                            bool stopped = await bitalinoController.stop();
+                            bool stopped = await bitalinoController!.stop();
                             _notify("Stopped: $stopped");
                           },
                           child: Text("Stop"),
