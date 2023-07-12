@@ -1,3 +1,9 @@
+Forked from afonsocraposo/bitalino
+
+This README is from the original repository
+
+---
+
 ## Important
 
 I stopped working in this plugin. I'm currently working in the development of a new biosignals acquisition device named "ScientISST". Learn more about it here:
