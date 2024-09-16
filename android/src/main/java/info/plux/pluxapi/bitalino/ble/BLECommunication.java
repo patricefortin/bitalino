@@ -249,7 +249,7 @@ public class BLECommunication extends BITalinoCommunication {
                 if (!action.equals("")) {
                     alarmIntent.putExtra(LOG_ALARM_EXTRA_ACTION, action);
                 }
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, id, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, id, alarmIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
                 AlarmManager alarmManager = (AlarmManager) activityContext.getSystemService(Context.ALARM_SERVICE);
 
                 String payLoad = "";
@@ -966,7 +966,7 @@ public class BLECommunication extends BITalinoCommunication {
         Intent alarmIntent = new Intent(LOG_ALARM);
         alarmIntent.putExtra(LOG_ALARM_EXTRA_ID, id);
         alarmIntent.putExtra(LOG_ALARM_EXTRA_IDENTIFIER, mBluetoothDeviceAddress);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, id, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, id, alarmIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         AlarmManager alarmManager = (AlarmManager) activityContext.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + intervalMillis, pendingIntent);
     }
@@ -976,7 +976,7 @@ public class BLECommunication extends BITalinoCommunication {
         alarmIntent.putExtra(LOG_ALARM_EXTRA_ID, LOG_ENABLE_COMMANDS);
         alarmIntent.putExtra(LOG_ALARM_EXTRA_IDENTIFIER, mBluetoothDeviceAddress);
         alarmIntent.putExtra(LOG_ALARM_EXTRA_ACTION, commandsAction);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, LOG_ENABLE_COMMANDS, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, LOG_ENABLE_COMMANDS, alarmIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         AlarmManager alarmManager = (AlarmManager) activityContext.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + WAIT_TIME_1SECONDS, pendingIntent);
     }
@@ -984,7 +984,7 @@ public class BLECommunication extends BITalinoCommunication {
     private void cancelLogAlarm(int id){
         AlarmManager alarmManager = (AlarmManager) activityContext.getSystemService(Context.ALARM_SERVICE);
         Intent alarmIntent = new Intent(LOG_ALARM);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, id, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(activityContext, id, alarmIntent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
         alarmManager.cancel(pendingIntent);
     }
